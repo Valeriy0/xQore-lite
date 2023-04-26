@@ -1,11 +1,105 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
+const plugin = require('tailwindcss/plugin');
 
+module.exports = {
+  mode: 'jit',
+  future: {
+    purgeLayersByDefault: true,
+    applyComplexClasses: true,
+  },
+  purge: ['./src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    screens: {
+      '2xl': { max: '1535px' },
+      // => @media (max-width: 1535px) { ... }
+      xl: { max: '1300px' },
+      // => @media (max-width: 1279px) { ... }
+      lg: { max: '1121px' },
+      lm: { max: '950px' },
+      sm: { max: '767px' },
+    },
+    extend: {
+      maxWidth: {
+        'desktop-full': '1200px',
+        'desktop-header': '1440px',
+        'desktop-main-content': '1440px',
+        'desktop-sideBar': '255px',
+        'desktop-productItemWrapper': '1040px',
+        footer: '1216px',
+      },
+      colors: {
+        white: '#ffffff',
+        'white-50': 'rgba(255,255,255,.0)',
+        'white-100': 'rgba(255,255,255,.1)',
+        'white-200': 'rgba(255,255,255,.2)',
+        'white-300': 'rgba(255,255,255,.3)',
+        'white-400': 'rgba(255,255,255,.4)',
+        'white-500': 'rgba(255,255,255,.5)',
+        'white-600': 'rgba(255,255,255,.6)',
+        'white-700': 'rgba(255,255,255,.7)',
+        'white-800': 'rgba(255,255,255,.8)',
+        lightGray: '#F4F3F1',
+        lightGray2: '#D9D9D9',
+        lightGray3: '#F8F8FA',
+        lightGray4: '#9CA3AF',
+        lightGray5: '#757575',
+        darkGrey: '#808080',
+        gray: '#7A7A79',
+        black: '#000000',
+        darkBlack: '#464748',
+        pinkslider2: '#E98478',
+        red: '#E1444D',
+        red2: '#FF4646',
+        redAlert: '#F90100',
+        'black-5': 'rgba(0, 0, 0, .05)',
+        'black-100': 'rgba(0, 0, 0, .1)',
+        'black-300': 'rgba(0, 0, 0, .3)',
+        'black-400': 'rgba(0, 0, 0, .4)',
+        'black-500': 'rgba(0, 0, 0, .5)',
+        'black-800': 'rgba(0, 0, 0, .8)',
+        hexBlack800: '#000000cc',
+        lightGreen: '#A6D05D',
+        greenAlert: '#21A415',
+        lightGreen200: 'rgba(166, 208, 93, 0.2)',
+        purple: '#875DD0',
+        lightPurple: '#E1E1FF',
+        violet: '#5D69D0',
+        salat: 'rgba(166, 208, 93, 0.1)',
+        lightPurple: 'rgba(135, 93, 208, 0.1)',
+      },
+    },
+  },
+  plugins: [
+    // eslint-disable-next-line global-require
+    plugin(({ addUtilities }) => {
+      addUtilities({
+        '.header-dialog-content': {
+          display: 'flex',
+          alignSelf: 'center',
+          justifyContent: 'center',
+          margin: '4rem 0.5rem',
+          padding: '0px',
+          boxShadow: 'rgb(0 0 0 / 5%) 0px 4px 8px 0px',
+          width: '100vw',
+          maxWidth: '480px',
+          maxHeight: '100vh',
+          outline: 'none',
+        },
+        '.header-dialog-overlay': {
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          zIndex: 2147483610,
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'rgba(0, 0, 0, 0.8)',
+          backdropFilter: 'blur(8px)',
+        },
+      });
+    }),
+  ],
+};
