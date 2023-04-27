@@ -7,6 +7,7 @@ export const useGetContract = () => {
 
   const types = {
     'xQore': [config.contractXqore, config.matrixXqoreAbi],
+    'router': [config.router, config.contractRouterAbi],
   };
 
   const getContract = (type) => {

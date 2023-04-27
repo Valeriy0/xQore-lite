@@ -36,6 +36,7 @@ const Index = () => {
     try {
       // registration BNB
       const contract = await getContract('xQore');
+      console.log(contract);
 
       let gas = null;
       try {
@@ -58,28 +59,25 @@ const Index = () => {
 
   const clickUpgrade = async (level) => {
     try {
-      // registration BNB
-      const contract = await getContract('xQore');
-
-      console.log(contract);
+      const routeContract = await getContract('router');
+      const value = toWei((Lvls[level] + 0.003).toFixed(3));
 
       let gas = null;
       try {
-        gas = await contract.estimateGas.buyNewLevel([level + 1], {
-          value: toWei(Lvls[level]),
+        gas = await contract.estimateGas.xQoreUpgrades([level + 1], {
+          value,
         });
       } catch (e) {
         //
       }
-
-      return await contract.buyNewLevel([level + 1], {
-        value: toWei(Lvls[level]),
+      return await routeContract.xQoreUpgrades([level + 1], {
+        value,
         gasLimit: parseInt(gas) ? increaseByPercent(gas) : BigNumber.from(2000000),
-      });
+      });;
     } catch (e) {
-    console.log(e);
-    return Promise.reject(e);
-  }
+      console.log(e);
+      return Promise.reject(e);
+    }
   }
 
   return (
