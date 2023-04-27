@@ -81,9 +81,10 @@ const Index = () => {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center">
-        <span className='text-white'>wallet - {account}</span>
-        <span>xQore - {config?.contractXqore}</span>
+    <div className="min-h-screen overflow-auto w-screen flex flex-col items-center justify-center">
+        
+        <span className='text-white sm:hidden'>wallet - {account}</span>
+        <span className='sm:hidden'>xQore - {config?.contractXqore}</span>
         {!account && (
           <button onClick={() => setOpenedModal(true)} className='bg-white p-10 text-black'>
             Connect wallet
