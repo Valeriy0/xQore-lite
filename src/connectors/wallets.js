@@ -1,10 +1,6 @@
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
-import MetaMaskIcon from 'assets/wallets/metamaskwallet.svg';
-import WalletConnectIcon from 'assets/wallets/walletconnect.svg';
-import TokenPocketIcon from 'assets/wallets/tokenpocket.svg';
-import TrustIcon from 'assets/wallets/trustwallet.svg';
-import config from 'helpers/config';
+import config from '@/helpers/config';
 
 export const supportedChainIds = [1, 56, 97];
 
@@ -41,24 +37,20 @@ export const Wallets = [
     title: 'Trust Wallet',
     subtitle: 'DApp in app',
     connector: injectedConnector,
-    icon: TrustIcon,
   },
   {
     title: 'TokenPocket',
     subtitle: 'DApp in app',
     connector: injectedConnector,
-    icon: TokenPocketIcon,
   },
   {
     title: 'MetaMask',
     subtitle: 'Desktop / DApp in app',
     connector: injectedConnector,
-    icon: MetaMaskIcon,
   },
   {
     title: 'WalletConnect',
     subtitle: 'Any wallet and browser',
     connector: walletConnectConnector,
-    icon: WalletConnectIcon,
   },
 ];

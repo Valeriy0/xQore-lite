@@ -1,127 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet';
-import { useInView } from 'react-intersection-observer';
-import { RecentActivities, Button } from 'components';
-import { LoginLayout } from 'layouts';
-import { useRequest } from 'helpers/hooks/useRequest';
-import { ActivitiesRepository } from 'connectors/repositories/activities';
-import { HeaderBanner, PreviewAccount } from 'features/login';
-import { TotalStatisticsRepository } from 'connectors/repositories/total-statistics';
-import { useOpenSupport } from 'helpers/hooks/useOpenSupport';
+import React, { useState } from 'react';
+import Image from 'next/image'
+import { Inter } from 'next/font/google'
+import { useWeb3React } from '@web3-react/core'
+import { ActivateModal } from '@/components/ActivateModal';
+import { useGetContract } from '@/helpers/hooks/useGetContract';
+import { toWei } from '@/helpers/numbers';
+import { BigNumber } from '@ethersproject/bignumber';
+import { increaseByPercent } from '@/helpers/numbers';
+import config from '@/helpers/config';
+
+const inter = Inter({ subsets: ['latin'] })
 
 const Index = () => {
-  const stepCount = 11;
-  const [countItemsLimit, setCountItemsLimit] = useState(0);
-  const [isObservedRecentActivities, setIsObservedRecentActivities] = useState(true);
-  const [isObservedStatistics, setIsObservedStatistics] = useState(true);
-  const { openSupport } = useOpenSupport();
+  const { getContract } = useGetContract();
+  const [openedModal, setOpenedModal] = useState(false);
+  const { account } = useWeb3React();
 
-  const { ref, inView } = useInView({
-    threshold: 0,
-  });
+  const Lvls = [
+    0.018,
+    0.024,
+    0.033,
+    0.046,
+    0.062,
+    0.088,
+    0.125,
+    0.175,
+    0.245,
+    0.345,
+    0.455,
+    0.644,
+  ]
 
-  const randomListLeaders = [
-    2597, 1454, 1192, 4882, 20387, 2700, 267, 18376, 468, 4728, 601, 448, 2669, 2359, 20785, 7366, 7, 18,
-  ];
 
-  const randomLeader = randomListLeaders[Math.floor(Math.random() * randomListLeaders?.length)];
+  const clickReg = async () => {
+    try {
+      // registration BNB
+      const contract = await getContract('xQore');
 
-  const styleBg = {
-    backgroundImage: `url('/blurs/login/blue-blur.png')`,
-    backgroundRepeat: 'round',
-    backgroundSize: 'cover',
-  };
+      let gas = null;
+      try {
+        gas = await contract.estimateGas.registrationExt({
+          value: toWei(Lvls[0]),
+        });
+      } catch (e) {
+        //
+      }
 
-  const recentActivitiesRequestMapper = (prev, data) => {
-    if (Object.keys(prev)?.length) {
-      return { ...data, activities: [...prev?.activities, ...data?.activities] };
-    }
+      return await contract.registrationExt({
+        value: toWei(Lvls[0]),
+        gasLimit: parseInt(gas) ? increaseByPercent(gas) : BigNumber.from(2000000),
+      });
+    } catch (e) {
+    console.log(e);
+    return Promise.reject(e);
+  }
+  }
 
-    return data;
-  };
+  const clickUpgrade = async (level) => {
+    try {
+      // registration BNB
+      const contract = await getContract('xQore');
 
-  const statisticsRequestMapper = (prev, data) => data;
+      console.log(contract);
 
-  const {
-    isLoading,
-    call: recentActivitiesCall,
-    data: tableData,
-  } = useRequest(
-    ActivitiesRepository.getRecentActivities,
-    [{ limit: stepCount, offset: countItemsLimit, count_hours: 1 }],
-    recentActivitiesRequestMapper,
-    isObservedRecentActivities,
-    setIsObservedRecentActivities,
-    inView,
-  );
+      let gas = null;
+      try {
+        gas = await contract.estimateGas.buyNewLevel([level + 1], {
+          value: toWei(Lvls[level]),
+        });
+      } catch (e) {
+        //
+      }
 
-  const { data: statistics, call: statisticsCall } = useRequest(
-    TotalStatisticsRepository.getStatistics,
-    [],
-    statisticsRequestMapper,
-    isObservedStatistics,
-    setIsObservedStatistics,
-    inView,
-  );
-
-  useEffect(() => {
-    if (isObservedRecentActivities) {
-      recentActivitiesCall();
-    }
-    if (isObservedStatistics) {
-      statisticsCall();
-    }
-  }, [inView]);
-
-  useEffect(async () => {
-    if (countItemsLimit >= stepCount) {
-      recentActivitiesCall();
-    }
-  }, [countItemsLimit]);
-
-  const AddItems = () => {
-    if (countItemsLimit <= tableData?.total_count_activities) {
-      setCountItemsLimit(countItemsLimit + stepCount);
-    }
-  };
+      return await contract.buyNewLevel([level + 1], {
+        value: toWei(Lvls[level]),
+        gasLimit: parseInt(gas) ? increaseByPercent(gas) : BigNumber.from(2000000),
+      });
+    } catch (e) {
+    console.log(e);
+    return Promise.reject(e);
+  }
+  }
 
   return (
-    <div className="flex flex-col">
-      <Helmet>
-        <title>Main page | Forsage</title>
-        <meta
-          name="description"
-          content="Participant authorization for access to all functions of the personal account"
-        />
-      </Helmet>
-      <HeaderBanner />
-      <PreviewAccount randomLeader={randomLeader} />
-      <div className="">
-        <RecentActivities
-          recentActivitiesRef={ref}
-          events={{ activities: tableData?.activities, ...statistics }}
-          addItems={AddItems}
-          isLoading={isLoading}
-          hiddenBtn={tableData?.total_count_activities <= tableData?.activities?.length}
-        />
-
-        <div
-          style={styleBg}
-          className="absolute left-1/2 -bottom-1/2 transform -translate-x-1/2 w-full h-full z-0 sm:hidden"
-        />
-      </div>
-
-      <div className="flex flex-col items-center sm:items-start justify-center my-25 sm:my-12 sm:mb-0 sm:p-5 z-10 sm:my-0 sm:pt-7.5">
-        <span className="text-white text-3xl font-bold mb-5"> Need help on how to use the platform? </span>
-        <span className="mb-7.5"> Get qualified support from Forsage experts via online chat </span>
-        <Button type="primary" className="font-medium rounded-mini sm:w-full" onClick={openSupport}>
-          Contact support
-        </Button>
-      </div>
+    <div className="h-screen w-screen flex flex-col items-center justify-center">
+        <span className='text-white'>wallet - {account}</span>
+        <span>xQore - {config?.contractXqore}</span>
+        {!account && (
+          <button onClick={() => setOpenedModal(true)} className='bg-white p-10 text-black'>
+            Connect wallet
+          </button>
+        )}
+      {account && (
+           <div className="w-full h-screen bg-[#18191A] flex items-center justify-center sm:h-full sm:p-2 ">
+           <div className="flex flex-wrap w-[950px] w-full items-center justify-center ">
+             {Lvls.map((item, itemIndex) => (
+               <button className="w-[180px] sm:w-[160px] sm:h-[95px] h-[170px] bg-[#4A69F6] rounded-[20px] m-2 flex flex-col items-center justify-between p-2 border border-3 border-[#3A3A3B] ">
+                 <div className="flex flex-row justify-between w-full p-1">
+                   <span className="text-xl font-bold">{itemIndex + 1} <span className="text-sm font-medium">lvl</span></span>
+                   <span className="text-xl font-bold">{item}<span className="text-sm font-medium">bnb</span></span>
+                 </div>
+                 <button onClick={itemIndex === 0 ? () => clickReg() : () => clickUpgrade(itemIndex)} className="bg-[#3A3A3B] rounded-[15px] px-5 text-white w-full h-[40px] font-normal  ">
+                   <span className="font-semibold sm:text-sm">{itemIndex === 0 ? 'Activate' : 'Upgrade'}</span>
+                 </button>
+               </button>
+             ))}
+             </div>    
+   
+         </div>
+   
+      )}
+      <ActivateModal handleCloseModal={() => setOpenedModal(false)} openedModal={openedModal} />
     </div>
-  );
-};
-
-Index.Layout = LoginLayout;
-
+  )
+}
 export default Index;

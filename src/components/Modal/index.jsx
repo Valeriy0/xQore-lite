@@ -1,6 +1,5 @@
 import React from 'react';
 import { DialogContent, DialogOverlay } from '@reach/dialog';
-import CloseIcon from 'assets/icons/close.svg';
 import clsx from 'clsx';
 
 export const Modal = ({ isOpened, onClose, children, className, isDisableOnClose }) => {
@@ -31,7 +30,7 @@ export const Modal = ({ isOpened, onClose, children, className, isDisableOnClose
           onClick={preventDefaultCallBack(onClose)}
           onTouchEnd={preventDefaultCallBack(onClose)}
         >
-          <CloseIcon className="w-6 h-6" />
+          X
         </div>
       </DialogContent>
       {!isDisableOnClose && (
@@ -40,7 +39,7 @@ export const Modal = ({ isOpened, onClose, children, className, isDisableOnClose
           onClick={preventDefaultCallBack(onClose)}
           onTouchEnd={preventDefaultCallBack(onClose)}
         >
-          <CloseIcon className="w-6 h-6" />
+          X
         </div>
       )}
     </DialogOverlay>

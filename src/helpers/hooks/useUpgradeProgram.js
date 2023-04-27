@@ -1,4 +1,4 @@
-import { useGetContract } from 'helpers/hooks/useGetContract';
+import { useGetContract } from '@/helpers/hooks/useGetContract';
 import {
   nameToType,
   CONTRACT_NAMES,
@@ -8,10 +8,10 @@ import {
   SERVICE_FEE,
   SERVICE_FEE_XQORE,
   XQORE_FIXED_NUM,
-} from 'helpers/constants';
-import { increaseByPercent, toWei } from 'helpers/numbers';
+} from '@/helpers/constants';
+import { increaseByPercent, toWei } from '@/helpers/numbers';
 import { useState } from 'react';
-import { useBnbPriceByAmount } from 'helpers/hooks/useBnbPriceByAmount';
+import { useBnbPriceByAmount } from '@/helpers/hooks/useBnbPriceByAmount';
 
 const nameToInt = {
   [PROGRAM_NAMES.X3]: 1,
@@ -20,50 +20,9 @@ const nameToInt = {
 
 export const useUpgradeProgram = () => {
   const [isLoadingUpgradeProgram, setIsLoadingUpgradeProgram] = useState(false);
-  const { getBnbPriceByAmount } = useBnbPriceByAmount();
 
   const { getContract } = useGetContract();
-
-  const onBUSDUpgrade = async (level, programName) => {
-    if (!isLoadingUpgradeProgram) {
-      setIsLoadingUpgradeProgram(true);
-
-      try {
-        const routeContract = await getContract(CONTRACT_NAMES.ROUTER);
-
-        let result = {};
-
-        let gas = null;
-
-        if (nameToInt[programName]) {
-          gas = await routeContract.estimateGas.x3x4BuyLevelBatchBusd(nameToInt[programName], [level]);
-
-          result = await routeContract.x3x4BuyLevelBatchBusd(nameToInt[programName], [level], {
-            gasLimit: parseInt(gas) ? increaseByPercent(gas) : DEFAULT_GAS_LIMIT,
-          });
-        } else if (programName === PROGRAM_NAMES.XXX) {
-          gas = await routeContract.estimateGas.xxxBuyLevelBatchBusd([level]);
-
-          result = await routeContract.xxxBuyLevelBatchBusd([level], {
-            gasLimit: parseInt(gas) ? increaseByPercent(gas) : DEFAULT_GAS_LIMIT,
-          });
-        } else if (programName === PROGRAM_NAMES.XGOLD) {
-          gas = await routeContract.estimateGas.xGoldBuyLevelBatchBusd([level]);
-
-          result = await routeContract.xGoldBuyLevelBatchBusd([level], {
-            gasLimit: parseInt(gas) ? increaseByPercent(gas) : DEFAULT_GAS_LIMIT,
-          });
-        }
-
-        return result;
-      } catch (e) {
-        return Promise.reject(e);
-      } finally {
-        setIsLoadingUpgradeProgram(false);
-      }
-    }
-  };
-
+  
   const onBNBUpgrade = async (level, programName) => {
     if (!isLoadingUpgradeProgram) {
       setIsLoadingUpgradeProgram(true);

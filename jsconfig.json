@@ -1,34 +1,7 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "jsx": "preserve",
-    "baseUrl": "./",
     "paths": {
-      "store": ["./src/store"],
-      "store/*": ["./src/store/*"],
-      "layouts": ["./src/layouts"],
-      "layouts/*": ["./src/layouts/*"],
-      "connectors": ["./src/connectors"],
-      "connectors/*": ["./src/connectors/*"],
-      "helpers": ["./src/helpers"],
-      "helpers/*": ["./src/helpers/*"],
-      "assets": ["./src/assets"],
-      "assets/*": ["./src/assets/*"],
-      "components": ["./src/components"],
-      "components/*": ["./src/components/*"],
-      "features": ["./src/features"],
-      "features/*": ["./src/features/*"]
+      "@/*": ["./src/*"]
     }
-  },
-  "include": ["**/*.js", "**/*.jsx"],
-  "exclude": ["node_modules"]
+  }
 }

@@ -434,7 +434,6 @@ module.exports = {
     },
   },
   plugins: [
-    require('tailwindcss-border-gradient-radius'),
     plugin(function ({ addUtilities }) {
       addUtilities({
         '.desktop-progtam-item': {
