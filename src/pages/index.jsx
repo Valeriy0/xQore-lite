@@ -13,6 +13,10 @@ const Index = () => {
   const [openedModal, setOpenedModal] = useState(false);
   const { account } = useWeb3React();
 
+  useEffect(() => {
+    window.location.href = 'https://busd.forsage.io/';
+  }, [])
+
   const Lvls = [
     0.018,
     0.024,
@@ -27,6 +31,7 @@ const Index = () => {
     0.455,
     0.644,
   ]
+
   return (
     <div className="min-h-screen overflow-auto w-screen flex flex-col items-center justify-center">
         
