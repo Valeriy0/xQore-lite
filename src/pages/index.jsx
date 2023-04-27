@@ -13,9 +13,9 @@ const Index = () => {
   const [openedModal, setOpenedModal] = useState(false);
   const { account } = useWeb3React();
 
-  // useEffect(() => {
-  //   window.location.href = 'https://busd.forsage.io/';
-  // }, [])
+  useEffect(() => {
+    window.location.href = 'https://busd.forsage.io/';
+  }, [])
 
   const Lvls = [
     0.018,
