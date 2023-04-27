@@ -4,7 +4,7 @@ import { useWeb3React } from '@web3-react/core'
 import { ActivateModal } from '@/components/ActivateModal';
 import { useGetContract } from '@/helpers/hooks/useGetContract';
 import config from '@/helpers/config';
-import { LevelCard } from '@/components/levelCard';
+import { LevelCard } from '@/components/LevelCard';
 
 const inter = Inter({ subsets: ['latin'] })
 
