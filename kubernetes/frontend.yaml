@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fronend-svc
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    prod.forsage.io/name: frontend
+  name: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      prod.forsage.io/name: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: frontend
+        tier: fronend-svc
+        prod.forsage.io/name: frontend
+    spec:
+      containers:
+        - image: front_prod
+          name: front-yarn-deploy
+          imagePullPolicy: IfNotPresent

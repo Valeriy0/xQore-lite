@@ -1,0 +1,31 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ .Values.STAND_NAME }}-forsage-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP2
+    hosts:
+    {{- if .Values.HOST_NAME_PROD }}
+    - {{ .Values.HOST_NAME_PROD }}
+    {{- else }}
+    - {{ .Values.HOST_NAME }}
+    {{- end }}
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 9443
+      name: https
+      protocol: HTTP2
+    hosts:
+    {{- if .Values.HOST_NAME_PROD }}
+    - {{ .Values.HOST_NAME_PROD }}
+    {{- else }}
+    - {{ .Values.HOST_NAME }}
+    {{- end }}
+---

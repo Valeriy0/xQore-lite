@@ -1,0 +1,41 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: nginx-pass-config-busd-front
+data:
+  nginx.conf: |
+    events {
+    }
+    http {
+        server {
+            listen 80;
+            auth_basic "Restricted Area";
+            auth_basic_user_file /etc/nginx/.htpasswd;
+            error_log  /var/log/nginx/error.log;
+            access_log /var/log/nginx/access.log;
+
+            index index.html index.htm index.php;
+
+            charset utf-8;
+            client_max_body_size 128m;
+
+            location / {
+                auth_basic "Restricted Area";
+                auth_basic_user_file /etc/nginx/.htpasswd;
+                proxy_pass http://forsage-busd-frontend:3000;
+                proxy_http_version 1.1;
+            }
+
+            location /api/ {
+                auth_basic off;
+            }
+
+            location /info/ {
+                auth_basic off;
+            }
+
+            location /docs/ {
+                auth_basic off;
+            }
+        }
+    }

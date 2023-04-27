@@ -1,0 +1,12 @@
+{
+  "writeKey": "a8553419098988941781-dd2cb067e148f3d4c54f9887bbe1110be3daeaab9d6b80dfc7e8244f603b7c15",
+  "readKey": "a8553419098988941781-c9cece19ee5dfc9197f6149e68d95b98d725596e46a0dc24d0f41d2c3e27dd91",
+  "upload": {
+    "type": "json",
+    "files": "public/locales/en/common.json"
+  },
+  "download": {
+    "files": "public/locales/${lang}/common.json",
+    "includeSourceLang": true
+  }
+}
