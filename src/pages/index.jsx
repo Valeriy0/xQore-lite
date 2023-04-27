@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google'
 import { useWeb3React } from '@web3-react/core'
 import { ActivateModal } from '@/components/ActivateModal';
 import { useGetContract } from '@/helpers/hooks/useGetContract';
-
 import config from '@/helpers/config';
 import { LevelCard } from '@/components/levelCard';
 
