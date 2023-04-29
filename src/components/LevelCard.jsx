@@ -5,21 +5,30 @@ import { toWei } from '@/helpers/numbers';
 import { BigNumber } from '@ethersproject/bignumber';
 import { increaseByPercent } from '@/helpers/numbers';
 
-export const LevelCard = ({ price, level = 1, }) => {
+export const LevelCard = ({ idx, activateBefore ,valueLvl, level, wallet, setTotalBnbForUpg, setTotalBnbForRefound, setIsActiveCount, setIsNotActiveCount }) => {
   const [isActiveLvl, setIsActiveLvl] = useState(false);
   const { getContract } = useGetContract();
   const { account } = useWeb3React();
-
-  console.log(isActiveLvl);
 
   const isUsersLvls = async () => {
     try {
       // registration BNB
       const contract = await getContract('xQore');
-      const isAlreadyBoughtLevel = await contract.usersActiveX6Levels(account, level);
-      setIsActiveLvl(isAlreadyBoughtLevel);
+      const isAlreadyBoughtLevel = await contract.usersActiveX6Levels(wallet, level);
+      console.log(valueLvl, level, wallet, isAlreadyBoughtLevel)
+      if (isAlreadyBoughtLevel) {
+        setIsActiveLvl(isAlreadyBoughtLevel);
+        setIsActiveCount((prev) => prev + 1);
+        setTotalBnbForRefound((prev) => prev + valueLvl)
+      } else {
+        setIsActiveLvl(false);
+        setIsNotActiveCount((prev) => prev + 1);
+        setTotalBnbForUpg((prev) => prev + valueLvl)
+      }
+      
 
     } catch (e) {
+      console.log(e);
       setIsActiveLvl(false);
     }
   }
@@ -55,38 +64,41 @@ export const LevelCard = ({ price, level = 1, }) => {
   }
   }
 
-  const clickUpgrade = async (level) => {
+  const clickUpgrade = async () => {
     try {
-      const routeContract = await getContract('router');
-      const value = toWei((price + 0.003).toFixed(3));
+      const contract = await getContract('xQore');
 
-      let gas = null;
-      try {
-        gas = await contract.estimateGas.xQoreUpgrades([level], {
-          value,
-        });
-      } catch (e) {
-        //
-      }
-      return await routeContract.xQoreUpgrades([level], {
-        value,
-        gasLimit: parseInt(gas) ? increaseByPercent(gas) : BigNumber.from(2000000),
-      });;
+      const price = (valueLvl - 0.003).toFixed(3);
+
+      return await contract.buyNewLevelFor(wallet, level, {
+        value: toWei(price),
+        gasLimit: BigNumber.from(2000000),
+      });
     } catch (e) {
       console.log(e);
       return Promise.reject(e);
     }
   }
 
-  return (
-    <button className={`w-[180px] sm:w-[160px] sm:h-[95px] h-[170px] ${isActiveLvl ? 'bg-[#21B914]' : 'bg-[#4A69F6]'} rounded-[20px] m-2 flex flex-col items-center justify-between p-2 border border-3 border-[#3A3A3B] `}>
-    <div className="flex flex-row justify-between w-full p-1">
-      <span className="text-xl font-bold">{level} <span className="text-sm font-medium">lvl</span></span>
-      <span className="text-xl font-bold">{price}<span className="text-sm font-medium">bnb</span></span>
-    </div>
-    <button onClick={isActiveLvl ? () => console.log('activated') : level === 1 ? () => clickReg() : () => clickUpgrade(level)} className="bg-[#DBE4EB] rounded-[15px] px-5 text-white w-full h-[40px] font-normal  ">
-      <span className="text-black font-semibold sm:text-sm">{isActiveLvl ? '✔️ Activated' : level === 1 ? 'Activate' : 'Upgrade'}</span>
-    </button>
-  </button>
-  )
+  if (!isActiveLvl) {
+    return (
+      <div className="flex flex-col w-full">
+        <div className="flex w-full space-x-4 justify-center">
+          <span>{idx}</span>
+          <span> | &nbsp;</span>
+          <span>{wallet},</span>
+          <span> | </span>
+          <span>{valueLvl}</span>
+          {/* <span> | </span>
+          <span>level - {level}</span> */}
+        </div>
+        <div className="flex space-x-2.5 w-full justify-center">
+          {/* <span className={isActiveLvl ? 'text-green' : 'text-red'}> {isActiveLvl ? 'upgraded' : 'NOT upgraded'}</span>
+          <span>{activateBefore}</span>
+          {!isActiveLvl && <button onClick={clickUpgrade}> + upgrade +</button>} */}
+        </div>
+      </div>
+    )
+  } 
+  return null;
 }
